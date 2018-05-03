@@ -44,7 +44,7 @@ def set_locale(category, loc):
                   'Maybe you need to run sudo locale-gen.')
         else:
             print('Could not set locale to %s.' % loc)
-            print('You should add "%s UTF-8" to %s ' % filename +
+            print('You should add "%s UTF-8" to %s ' % (loc, filename) +
                   'and run sudo locale-gen.')
         print('Run this program with -L to disable setting the locale.')
         raise SystemExit(1)
