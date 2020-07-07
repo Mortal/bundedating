@@ -28,12 +28,13 @@ def set_locale(category, loc):
         try:
             with open(filename) as fp:
                 for line in fp:
-                    l = line.split()[0]
-                    if l == loc:
+                    line_loc = line.split()[0]
+                    if line_loc == loc:
                         found = True
                         break
-                    elif l.startswith(loc):
-                        set_locale(category, l)  # Try again with longer name
+                    elif line_loc.startswith(loc):
+                        # Try again with longer name
+                        set_locale(category, line_loc)
                         return
                 else:
                     found = False
@@ -62,8 +63,8 @@ def main():
         set_locale(locale.LC_ALL, "da_DK")
     date = datetime.datetime.now()
     date += datetime.timedelta(14)
-    date = date.strftime("%A d. {}. %B kl. %H:%M").format(date.day)
-    print(msg.format(name=args.name, gen=args.genindlemmelse, date=date))
+    date_str = date.strftime("%A d. {}. %B kl. %H:%M").format(date.day)
+    print(msg.format(name=args.name, gen=args.genindlemmelse, date=date_str))
 
 
 if __name__ == "__main__":
