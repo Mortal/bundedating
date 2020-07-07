@@ -4,7 +4,8 @@ import datetime
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument("-L", "--no-locale", action="store_false", dest="locale")
+parser.add_argument("-L", "--no-locale", action="store_true", help="no-op")
+parser.add_argument("-l", "--locale", action="store_true", dest="locale")
 parser.add_argument(
     "-g", "--genindlemmelse", action="store_const", const="gen", default=""
 )
@@ -18,6 +19,39 @@ msg = (
     "gang!\n"
     "Deadline er altså {date}."
 )
+
+WEEKDAYS = "søndag mandag tirsdag onsdag torsdag fredag lørdag"
+MONTHS = """- januar februar marts april maj juni
+juli august september oktober november december"""
+
+
+def main():
+    args = parser.parse_args()
+    if args.no_locale:
+        parser.error("-L should not be specified as it is now the default")
+    date = datetime.datetime.now()
+    date += datetime.timedelta(14)
+    if args.locale:
+        set_locale(locale.LC_ALL, "da_DK")
+        date_keys = dict(
+            weekday=date.strftime("%A"),
+            month=date.strftime("%B"),
+            hour=date.strftime("%H"),
+            minute=date.strftime("%M"),
+            day=date.day,
+        )
+    else:
+        weekday = WEEKDAYS.split()[date.weekday()]
+        month = MONTHS.split()[date.month]
+        date_keys = dict(
+            weekday=weekday,
+            month=month,
+            hour="%02d" % date.hour,
+            minute="%02d" % date.minute,
+            day=date.day,
+        )
+    date_str = "{weekday} d. {day}. {month} kl. {hour}:{minute}".format(**date_keys)
+    print(msg.format(name=args.name, gen=args.genindlemmelse, date=date_str))
 
 
 def set_locale(category, loc):
@@ -55,16 +89,6 @@ def set_locale(category, loc):
             )
         print("Run this program with -L to disable setting the locale.")
         raise SystemExit(1)
-
-
-def main():
-    args = parser.parse_args()
-    if args.locale:
-        set_locale(locale.LC_ALL, "da_DK")
-    date = datetime.datetime.now()
-    date += datetime.timedelta(14)
-    date_str = date.strftime("%A d. {}. %B kl. %H:%M").format(date.day)
-    print(msg.format(name=args.name, gen=args.genindlemmelse, date=date_str))
 
 
 if __name__ == "__main__":
