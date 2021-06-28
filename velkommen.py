@@ -20,7 +20,7 @@ msg = (
     "Deadline er altså {date}."
 )
 
-WEEKDAYS = "søndag mandag tirsdag onsdag torsdag fredag lørdag"
+WEEKDAYS = "mandag tirsdag onsdag torsdag fredag lørdag søndag"
 MONTHS = """- januar februar marts april maj juni
 juli august september oktober november december"""
 
@@ -41,7 +41,10 @@ def main():
             day=date.day,
         )
     else:
-        weekday = WEEKDAYS.split()[date.weekday()]
+        # WEEKDAYS starts from Monday, so subtract some Monday.
+        some_monday = datetime.date(2021, 6, 28).weekday()
+        wd = (date.weekday() - some_monday) % 7
+        weekday = WEEKDAYS.split()[wd]
         month = MONTHS.split()[date.month]
         date_keys = dict(
             weekday=weekday,
